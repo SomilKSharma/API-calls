@@ -1,0 +1,26 @@
+.profiles {
+    display: flex; 
+    cursor: pointer;
+    justify-content: space-around; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+  
+.profile {
+    width: 200px; 
+    padding: 20px; 
+    border: 1px solid #ccc; 
+    margin: 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px; 
+    background-color: #fff; 
+    text-align: center; 
+}
+  
+h1 {
+    font-size: 24px; 
+    color: #333; 
+    text-align: center; 
+    margin: 20px 0; 
+}
+  
