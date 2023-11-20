@@ -8,59 +8,80 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-function fetchDataAndPopulateProfiles() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const profilesContainer = document.querySelector('.profiles');
-        const loadingIndicator = document.createElement('div');
-        loadingIndicator.textContent = 'Loading...';
-        profilesContainer.appendChild(loadingIndicator);
-        try {
-            const response = yield fetch('https://reqres.in/api/users?page=1');
-            if (!response.ok) {
-                throw new Error(`Failed to fetch data from the API. Status: ${response.status}`);
+class ProfileManager {
+    constructor() {
+        this.profilesContainer = document.querySelector('.profiles');
+        this.loadingIndicator = document.createElement('div');
+        this.loadingIndicator.textContent = 'Loading...';
+        this.areProfilesHidden = false;
+    }
+    fetchData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield fetch('https://reqres.in/api/users?page=1');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data from the API. Status: ${response.status}`);
+                }
+                return response.json();
             }
-            const data = yield response.json();
-            // Clear the loading indicator
-            loadingIndicator.remove();
-            data.data.forEach((profile, index) => {
-                const profileElement = document.createElement('div');
-                profileElement.classList.add('profile');
-                profileElement.setAttribute('id', String(index));
-                profileElement.innerHTML = `
-          <img src='${profile.avatar}' />
-          <p>${profile.first_name} ${profile.last_name}</p>
-          <p>Email: ${profile.email}</p>
-        `;
-                profilesContainer.appendChild(profileElement);
-            });
-            const profileElements = document.querySelectorAll('.profile');
-            let areProfilesHidden = false;
-            profileElements.forEach((profileElement, index) => {
-                profileElement.addEventListener('click', () => {
-                    if (areProfilesHidden) {
-                        // Show all profile elements
-                        profileElements.forEach((element) => {
-                            element.style.display = 'block';
-                        });
-                        areProfilesHidden = false; // Update the state
-                    }
-                    else {
-                        // Hide all other profiles except the clicked one
-                        profileElements.forEach((element) => {
-                            if (element !== profileElement) {
-                                element.style.display = 'none';
-                            }
-                        });
-                        areProfilesHidden = true; // Update the state
-                    }
-                });
+            catch (error) {
+                throw new Error('Error fetching data');
+            }
+        });
+    }
+    createProfileElement(profile, index) {
+        const profileElement = document.createElement('div');
+        profileElement.classList.add('profile');
+        profileElement.setAttribute('id', String(index));
+        profileElement.innerHTML = `
+      <img src='${profile.avatar}' />
+      <p>${profile.first_name} ${profile.last_name}</p>
+      <p>Email: ${profile.email}</p>
+    `;
+        return profileElement;
+    }
+    addProfilesToContainer(profiles) {
+        profiles.forEach((profile, index) => {
+            const profileElement = this.createProfileElement(profile, index);
+            this.profilesContainer.appendChild(profileElement);
+        });
+    }
+    hideAllProfilesExceptClicked(clickedProfile) {
+        const profileElements = document.querySelectorAll('.profile');
+        if (!this.areProfilesHidden) {
+            profileElements.forEach((element) => {
+                const isClickedProfile = element === clickedProfile;
+                element.style.display = isClickedProfile ? 'block' : 'none';
             });
         }
-        catch (error) {
-            console.error(error);
-            loadingIndicator.textContent = 'Error fetching data';
+        else {
+            profileElements.forEach((element) => element.style.display = 'block');
         }
-    });
+        this.areProfilesHidden = !this.areProfilesHidden;
+    }
+    attachClickHandlers() {
+        const profileElements = document.querySelectorAll('.profile');
+        profileElements.forEach((profileElement) => {
+            profileElement.addEventListener('click', () => {
+                this.hideAllProfilesExceptClicked(profileElement);
+            });
+        });
+    }
+    fetchDataAndPopulateProfiles() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.profilesContainer.appendChild(this.loadingIndicator);
+            try {
+                const data = yield this.fetchData();
+                this.loadingIndicator.remove();
+                this.addProfilesToContainer(data.data);
+                this.attachClickHandlers();
+            }
+            catch (error) {
+                console.error(error);
+                this.loadingIndicator.textContent = 'Error fetching data';
+            }
+        });
+    }
 }
-// Call the function to fetch and populate profiles when the page loads
-window.addEventListener('load', fetchDataAndPopulateProfiles);
+const profileManager = new ProfileManager();
+window.addEventListener('load', () => profileManager.fetchDataAndPopulateProfiles());
