@@ -1,9 +1,4 @@
-interface Profile {
-  first_name: string;
-  last_name: string;
-  avatar: string;
-  email: string;
-}
+import { IProfile } from "./IProfile";
 
 class ProfileManager {
   private profilesContainer: HTMLDivElement;
@@ -31,7 +26,7 @@ class ProfileManager {
     }
   }
 
-  private createProfileElement(profile: Profile, index: number): HTMLDivElement {
+  private createProfileElement(profile: IProfile, index: number): HTMLDivElement {
     const profileElement = document.createElement('div');
     profileElement.classList.add('profile');
     profileElement.setAttribute('id', String(index));
@@ -43,7 +38,7 @@ class ProfileManager {
     return profileElement;
   }
 
-  private addProfilesToContainer(profiles: Profile[]): void {
+  private addProfilesToContainer(profiles: IProfile[]): void {
     profiles.forEach((profile, index) => {
       const profileElement = this.createProfileElement(profile, index);
       this.profilesContainer.appendChild(profileElement);
