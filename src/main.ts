@@ -12,7 +12,7 @@ class ProfileManager {
     this.areProfilesHidden = false;
   }
 
-  private async fetchData(): Promise<any> {
+  public async fetchData(): Promise<any> {
     try {
       const response = await fetch('https://reqres.in/api/users?page=1');
 
@@ -26,7 +26,7 @@ class ProfileManager {
     }
   }
 
-  private createProfileElement(profile: IProfile, index: number): HTMLDivElement {
+  public createProfileElement(profile: IProfile, index: number): HTMLDivElement {
     const profileElement = document.createElement('div');
     profileElement.classList.add('profile');
     profileElement.setAttribute('id', String(index));
@@ -38,14 +38,14 @@ class ProfileManager {
     return profileElement;
   }
 
-  private addProfilesToContainer(profiles: IProfile[]): void {
+  public addProfilesToContainer(profiles: IProfile[]): void {
     profiles.forEach((profile, index) => {
       const profileElement = this.createProfileElement(profile, index);
       this.profilesContainer.appendChild(profileElement);
     });
   }
 
-  private hideAllProfilesExceptClicked(clickedProfile: Element): void {
+  public hideAllProfilesExceptClicked(clickedProfile: Element): void {
     const profileElements = document.querySelectorAll('.profile');
     if (!this.areProfilesHidden) {  
       profileElements.forEach((element) => {
@@ -58,7 +58,7 @@ class ProfileManager {
     this.areProfilesHidden = !this.areProfilesHidden
   }
 
-  private attachClickHandlers(): void {
+  public attachClickHandlers(): void {
     const profileElements = document.querySelectorAll('.profile');
     profileElements.forEach((profileElement) => {
       profileElement.addEventListener('click', () => {
